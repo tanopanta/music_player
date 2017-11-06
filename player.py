@@ -1,11 +1,13 @@
 import glob
+import os
 import sys
 import time
 from random import shuffle
 
 import pygame
 
-mp3_list = glob.glob("*.mp3") #testの中のmp3をリスト化
+DIR_PATH = ""
+mp3_list = glob.glob(DIR_PATH + "*.mp3") #testの中のmp3をリスト化
 shuffle(mp3_list) #リストをシャッフル
 
 print(mp3_list)
@@ -17,7 +19,7 @@ print("ctrl+c stop")
 for mp3 in mp3_list:
     pygame.mixer.music.load(mp3)
     pygame.mixer.music.play() 
-    print(mp3)
+    print(os.path.splitext(os.path.basename(mp3))[0])
     try:
         while pygame.mixer.music.get_busy(): 
             pygame.time.Clock().tick(1)
