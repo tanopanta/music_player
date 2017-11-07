@@ -1,3 +1,10 @@
+"""
+音楽プレイヤー
+
+pygame.mixer.musicを利用
+日本語ドキュメント
+http://westplain.sakuraweb.com/translate/pygame/Music.cgi#pygame.mixer.music.pause
+"""
 import concurrent.futures
 import glob
 import os
@@ -40,6 +47,9 @@ class Player:
         self.in_pause = False
         mixer.music.unpause()
 
+    def rewind(self):
+        mixer.music.rewind()
+
     def end(self):
         print("end")
         mixer.music.stop()
@@ -47,13 +57,18 @@ class Player:
 
 def main():
     player = Player() 
+    
+    """
+    スレッドプール(python 3.2以降)
+    https://qiita.com/castaneai/items/9cc33817419896667f34
+    """
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
     executor.submit(player.loop)
     while True:
         try:
             time.sleep(1)
         except KeyboardInterrupt:
-            s = input("入力 skip, end, pause, unpause:")
+            s = input("入力 skip, end, pause, unpause, rewind:")
             if s == "skip":
                 player.skip()
             elif s == "end":
@@ -62,9 +77,12 @@ def main():
                 player.pause()
             elif s == "unpause":
                 player.unpause()
+            elif s == "rewind":
+                player.rewind()
             else:
                 print("キーエラー。終了します")
                 player.end()
+                break
     
 
 if __name__ == '__main__':
