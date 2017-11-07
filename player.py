@@ -37,6 +37,7 @@ class Player:
                 time.sleep(1)
     
     def skip(self):
+        self.unpause()
         mixer.music.stop()
     
     def pause(self):
@@ -44,10 +45,12 @@ class Player:
         mixer.music.pause()
     
     def unpause(self):
-        self.in_pause = False
-        mixer.music.unpause()
+        if self.in_pause:
+            self.in_pause = False
+            mixer.music.unpause()
 
     def rewind(self):
+        self.unpause()
         mixer.music.rewind()
 
     def end(self):
