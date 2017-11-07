@@ -22,14 +22,13 @@ class Player:
             mixer.music.load(mp3)
             mixer.music.play() 
             print(os.path.splitext(os.path.basename(mp3))[0])
-            try:
-                while mixer.music.get_busy(): 
-                    time.sleep(1)
-            except KeyboardInterrupt:
-                self.end()
+            while mixer.music.get_busy(): 
+                time.sleep(1)
     
     def skip(self):
         mixer.music.stop()
+
+    
 
     def end(self):
         print("end")
@@ -37,7 +36,12 @@ class Player:
         sys.exit()
 
 def main():
-    Player().loop()
+    player = Player() 
+    try:
+        player.loop()
+    except KeyboardInterrupt:
+        player.end()
+    
 
 if __name__ == '__main__':
     main()
