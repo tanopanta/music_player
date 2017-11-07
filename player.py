@@ -4,26 +4,40 @@ import sys
 import time
 from random import shuffle
 
-import pygame
+from pygame import mixer
 
 DIR_PATH = ""
-mp3_list = glob.glob(DIR_PATH + "*.mp3") #testの中のmp3をリスト化
-shuffle(mp3_list) #リストをシャッフル
 
-print(mp3_list)
+class Player:
+    def __init__(self):
+        self.mp3_list = glob.glob(DIR_PATH + "*.mp3") #testの中のmp3をリスト化
+        shuffle(self.mp3_list) #リストをシャッフル
+        print(self.mp3_list)
 
-pygame.mixer.init()
+        mixer.init()
+        print("ctrl+c stop")
+    
+    def loop(self):
+        for mp3 in self.mp3_list:
+            mixer.music.load(mp3)
+            mixer.music.play() 
+            print(os.path.splitext(os.path.basename(mp3))[0])
+            try:
+                while mixer.music.get_busy(): 
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                self.end()
+    
+    def skip(self):
+        mixer.music.stop()
 
+    def end(self):
+        print("end")
+        mixer.music.stop()
+        sys.exit()
 
-print("ctrl+c stop")
-for mp3 in mp3_list:
-    pygame.mixer.music.load(mp3)
-    pygame.mixer.music.play() 
-    print(os.path.splitext(os.path.basename(mp3))[0])
-    try:
-        while pygame.mixer.music.get_busy(): 
-            pygame.time.Clock().tick(1)
-    except KeyboardInterrupt:
-        pass
-print("end")
-pygame.mixer.music.stop() # 再生の終了
+def main():
+    Player().loop()
+
+if __name__ == '__main__':
+    main()
