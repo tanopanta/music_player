@@ -25,24 +25,33 @@ class Player:
         mixer.init()
 
         self.in_pause = False
-
-        print("ctrl+c stop")
+        self.music_index = -1
     
-    #TODO:playとloopに分ける
-    def loop(self):
-        for mp3 in self.mp3_list:
+    def play(self):
+        while self.music_index < len(self.mp3_list)-1:
+            print(self.music_index)
+            print(len(self.mp3_list))
+            self.music_index += 1
+            mp3 = self.mp3_list[self.music_index]
             mixer.music.load(mp3)
             mixer.music.play() 
             print(os.path.splitext(os.path.basename(mp3))[0])
             while mixer.music.get_busy() or self.in_pause:
                 time.sleep(1)
+        print("aaaa")
+        self.end()
     
     def back(self):
-        pass
+        if self.music_index < 1:
+            return
+        self.unpause()
+        self.music_index -= 2 #1個前＝最初から　2個前＝前の曲
+        mixer.music.stop()
 
     def skip(self):
         self.unpause()
         mixer.music.stop()
+
     
     def pause(self):
         self.in_pause = True
@@ -59,8 +68,7 @@ class Player:
 
     def end(self):
         print("end")
-        mixer.music.stop()
-        sys.exit()
+        mixer.quit()
 
 def main():
     player = Player() 
@@ -70,26 +78,30 @@ def main():
     https://qiita.com/castaneai/items/9cc33817419896667f34
     """
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
-    executor.submit(player.loop)
+    executor.submit(player.play)
+    print("ctrl+c stop")
     while True:
         try:
             time.sleep(0.5)
         except KeyboardInterrupt:
-            s = input("入力 skip, end, pause, unpause, rewind:")
+            s = input("入力 skip, end, pause, unpause, rewind, back:")
             if s == "skip":
                 player.skip()
             elif s == "end":
                 player.end()
+                return
             elif s == "pause":
                 player.pause()
             elif s == "unpause":
                 player.unpause()
             elif s == "rewind":
                 player.rewind()
+            elif s == "back":
+                player.back()
             else:
                 print("キーエラー。終了します")
                 player.end()
-                break
+                return
     
 
 if __name__ == '__main__':
