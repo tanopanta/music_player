@@ -14,7 +14,7 @@ from random import shuffle
 
 from pygame import mixer
 
-DIR_PATH = ""
+DIR_PATH = "music\\"
 
 class Player:
     def __init__(self):
@@ -28,6 +28,7 @@ class Player:
 
         print("ctrl+c stop")
     
+    #TODO:playとloopに分ける
     def loop(self):
         for mp3 in self.mp3_list:
             mixer.music.load(mp3)
@@ -36,6 +37,9 @@ class Player:
             while mixer.music.get_busy() or self.in_pause:
                 time.sleep(1)
     
+    def back(self):
+        pass
+
     def skip(self):
         self.unpause()
         mixer.music.stop()
@@ -69,7 +73,7 @@ def main():
     executor.submit(player.loop)
     while True:
         try:
-            time.sleep(1)
+            time.sleep(0.5)
         except KeyboardInterrupt:
             s = input("入力 skip, end, pause, unpause, rewind:")
             if s == "skip":
